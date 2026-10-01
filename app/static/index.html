@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mobiflow counter</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%232a78d6'/><path d='M18 4 9 18h6l-2 10 10-15h-6z' fill='white'/></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300..800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M18 3 8 18h7l-2 11 11-16h-7z"/></svg>
+      <span>Mobiflow counter</span>
+    </div>
+    <nav class="actions">
+      <a class="btn ghost" href="api/export.csv" id="export-btn">Exporter en CSV</a>
+      <label class="btn primary">
+        <input type="file" id="file-input" accept="application/pdf,.pdf" multiple hidden>
+        Ajouter des fiches
+      </label>
+    </nav>
+  </header>
+
+  <main>
+    <section id="empty" class="empty" hidden>
+      <div class="drop-target" id="empty-drop">
+        <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M27 4 12 27h11l-3 17 16-24H25z"/></svg>
+        <h1>Dépose tes fiches Mobiflow ici</h1>
+        <p>Les PDF « Debit note » que tu reçois chaque mois. Tu peux en déposer plusieurs à la fois : chaque fiche est lue, vérifiée et ajoutée au suivi.</p>
+        <label class="btn primary">
+          <input type="file" accept="application/pdf,.pdf" multiple hidden class="file-input-alt">
+          Choisir des fichiers
+        </label>
+      </div>
+    </section>
+
+    <div id="content" hidden>
+      <section class="hero">
+        <p class="headline" id="headline"></p>
+        <div class="filters" id="filters" role="group" aria-label="Période"></div>
+      </section>
+
+      <section class="facts" id="facts" aria-label="Chiffres clés"></section>
+
+      <section class="panel calendar-panel">
+        <div class="panel-head">
+          <h2>Chaque jour de charge</h2>
+          <p>Énergie chargée par jour de branchement (kWh)</p>
+        </div>
+        <div id="chart-calendar" class="chart chart-calendar"></div>
+      </section>
+
+      <div class="grid">
+        <section class="panel">
+          <div class="panel-head">
+            <h2>Remboursement par mois</h2>
+            <p>Montant des sessions démarrées dans le mois</p>
+          </div>
+          <div id="chart-monthly" class="chart"></div>
+        </section>
+        <section class="panel">
+          <div class="panel-head">
+            <h2>Cumul remboursé</h2>
+            <p>Total cumulé des fiches émises par Mobiflow</p>
+          </div>
+          <div id="chart-cumul" class="chart"></div>
+        </section>
+      </div>
+
+      <section class="panel">
+        <div class="panel-head">
+          <h2>Fiches</h2>
+          <p>Les fiches déposées, de la plus récente à la plus ancienne</p>
+        </div>
+        <div class="table-wrap">
+          <table class="table" id="notes-table">
+            <thead>
+              <tr>
+                <th>Fiche</th>
+                <th>Date</th>
+                <th>Échéance</th>
+                <th class="num">Sessions</th>
+                <th class="num">kWh</th>
+                <th class="num">Total</th>
+                <th><span class="sr-only">Actions</span></th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head row">
+          <div>
+            <h2>Sessions</h2>
+            <p id="sessions-caption"></p>
+          </div>
+          <label class="select">
+            <span class="sr-only">Filtrer par fiche</span>
+            <select id="sessions-filter"></select>
+          </label>
+        </div>
+        <div class="table-wrap">
+          <table class="table" id="sessions-table">
+            <thead>
+              <tr>
+                <th>Début</th>
+                <th>Fin</th>
+                <th class="num">Durée</th>
+                <th class="num">kWh</th>
+                <th class="num">Tarif</th>
+                <th class="num">Montant</th>
+                <th>Contrôle</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+        <div class="more" id="sessions-more"></div>
+      </section>
+    </div>
+  </main>
+
+  <div class="drop-overlay" id="drop-overlay" hidden>
+    <div>
+      <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M27 4 12 27h11l-3 17 16-24H25z"/></svg>
+      <p>Lâche pour ajouter les fiches</p>
+    </div>
+  </div>
+  <div class="toasts" id="toasts" aria-live="polite"></div>
+
+  <script src="vendor/echarts.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

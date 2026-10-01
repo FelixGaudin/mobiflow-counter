@@ -1,0 +1,10 @@
+services:
+  mobiflow:
+    build: .
+    image: mobiflow-counter
+    container_name: mobiflow-counter
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./data:/data
+    restart: unless-stopped
