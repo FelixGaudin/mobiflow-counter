@@ -10,7 +10,8 @@ et contrôle chaque fiche.
 docker compose up -d --build
 ```
 
-Puis ouvrir http://localhost:8000 et glisser les PDF n'importe où sur la page.
+Puis ouvrir http://localhost:8742 et glisser les PDF n'importe où sur la page.
+Pour un autre port : `MOBIFLOW_PORT=9000 docker compose up -d`.
 
 Les données (base SQLite + PDF originaux) sont dans `./data`, monté sur `/data` dans
 le conteneur. Sauvegarder ce dossier suffit.

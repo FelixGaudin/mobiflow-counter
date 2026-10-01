@@ -4,7 +4,7 @@ services:
     image: mobiflow-counter
     container_name: mobiflow-counter
     ports:
-      - "8000:8000"
+      - "${MOBIFLOW_PORT:-8742}:8000"
     volumes:
       - ./data:/data
     restart: unless-stopped
