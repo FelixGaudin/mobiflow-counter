@@ -63,6 +63,21 @@ class Dashboard(BaseModel):
     sessions: list[SessionOut]
 
 
+class Summary(BaseModel):
+    total: float
+    kwh: float
+    year_total: float
+    monthly_average: float
+    best_month: str | None
+    best_month_total: float | None
+    current_rate: float | None
+    last_note_number: str | None
+    last_note_date: datetime.date | None
+    last_note_total: float | None
+    note_count: int
+    session_count: int
+
+
 class UploadResult(BaseModel):
     filename: str
     ok: bool
@@ -137,6 +152,32 @@ def dashboard() -> Dashboard:
         )
     sessions.sort(key=lambda s: s.start)
     return Dashboard(notes=notes, sessions=sessions)
+
+
+@app.get("/api/summary")
+def summary() -> Summary:
+    """Flat key figures, meant to be polled by Home Assistant's REST integration."""
+    data = dashboard()
+    by_month: dict[str, float] = defaultdict(float)
+    for s in data.sessions:
+        by_month[s.start.strftime("%Y-%m")] += s.amount
+    best = max(by_month, key=lambda m: by_month[m]) if by_month else None
+    year = datetime.date.today().year
+    last = max(data.notes, key=lambda n: n.note_date) if data.notes else None
+    return Summary(
+        total=round(sum(s.amount for s in data.sessions), 2),
+        kwh=round(sum(s.kwh for s in data.sessions), 2),
+        year_total=round(sum(s.amount for s in data.sessions if s.start.year == year), 2),
+        monthly_average=round(sum(by_month.values()) / len(by_month), 2) if by_month else 0.0,
+        best_month=best,
+        best_month_total=round(by_month[best], 2) if best else None,
+        current_rate=data.sessions[-1].rate if data.sessions else None,
+        last_note_number=last.number if last else None,
+        last_note_date=last.note_date if last else None,
+        last_note_total=last.total if last else None,
+        note_count=len(data.notes),
+        session_count=len(data.sessions),
+    )
 
 
 @app.post("/api/upload")

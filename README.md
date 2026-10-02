@@ -25,6 +25,7 @@ le conteneur. Sauvegarder ce dossier suffit.
   sinon le manque est indiqué dans la colonne « Contrôle ».
 - Graphes : calendrier des jours de charge, remboursement par mois, cumul remboursé.
 - Export CSV de toutes les sessions.
+- Chiffres clés sur `/api/summary`, pour [Home Assistant](docs/home-assistant.md).
 
 ## Développement
 

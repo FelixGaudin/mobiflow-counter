@@ -123,3 +123,26 @@ def test_upload_flow(client):
     assert client.delete(f"/api/notes/{number}").status_code == 200
     assert len(client.get("/api/dashboard").json()["notes"]) == 1
     assert client.get(f"/api/notes/{number}/pdf").status_code == 404
+
+
+def test_summary(client):
+    empty = client.get("/api/summary").json()
+    assert empty["total"] == 0 and empty["best_month"] is None and empty["last_note_number"] is None
+
+    files = [("files", (f"{n['number']}.pdf", make_pdf(n), "application/pdf")) for n in (NOTE_A, NOTE_B)]
+    client.post("/api/upload", files=files)
+    summary = client.get("/api/summary").json()
+    assert summary == {
+        "total": 15.0,
+        "kwh": 64.0,
+        "year_total": 0.0,
+        "monthly_average": 7.5,
+        "best_month": "2030-01",
+        "best_month_total": 11.0,
+        "current_rate": 0.3,
+        "last_note_number": "SB-DN-A00000000-2",
+        "last_note_date": "2030-03-01",
+        "last_note_total": 4.0,
+        "note_count": 2,
+        "session_count": 5,
+    }
